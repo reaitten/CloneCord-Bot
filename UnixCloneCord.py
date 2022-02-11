@@ -32,6 +32,7 @@ from time import sleep
 from typing import Optional
 from discord.ext import commands
 from discord.utils import get
+from logging.handlers import RotatingFileHandler
 
 # Fetch .env configuration. DO NOT TOUCH
 if not os.path.isfile(".env"):
@@ -44,14 +45,16 @@ else:
     TOKEN = os.getenv("TOKEN")
     PREFIX = os.getenv("PREFIX")
 
-# Some sweet bot logging. I don't think it logs GClone commands and stuff like that
-LOGGER = logging.getLogger("discord")
-LOGGER.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename="bot.log", encoding="utf-8", mode="w")
-handler.setFormatter(
-    logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
+# very epic logging technique
+LOGGER = logging.getLogger("discord-clonecord")
+logging.basicConfig(
+    level=logging.DEBUG,
+    handlers=[
+        logging.StreamHandler(),
+        logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"),
+        RotatingFileHandler("log.txt", maxBytes=50000000, backupCount=10),
+    ],
 )
-LOGGER.addHandler(handler)
 
 # Bot prefix set to the one in your config.json file. Don't modify or touch this!
 bot = commands.Bot(command_prefix=PREFIX)
@@ -67,7 +70,7 @@ async def on_ready():
         activity=discord.Activity(
             type=discord.ActivityType.watching,
             # name=PREFIX + "help to get help! CloneCord V6 BETA",
-            name=PREFIX + "help to get help! CloneCord V6 BETA",
+            name=PREFIX + "help to get help!",
         )
     )
     # LOGGER.info("CloneCord Status Ready!")

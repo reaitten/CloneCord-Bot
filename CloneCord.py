@@ -55,7 +55,7 @@ else:
 
     TOKEN = os.getenv("TOKEN")
     PREFIX = os.getenv("PREFIX")
-LOGGER
+
 # Some sweet bot logging. I don't think it logs GClone commands and stuff like that
 LOGGER = logging.getLogger("discord")
 LOGGER.setLevel(logging.DEBUG)
