@@ -49,9 +49,9 @@ else:
 LOGGER = logging.getLogger("discord-clonecord")
 logging.basicConfig(
     level=logging.DEBUG,
+    format="%(asctime)s:%(levelname)s:%(name)s: %(message)s",
     handlers=[
         logging.StreamHandler(),
-        logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"),
         RotatingFileHandler("log.txt", maxBytes=50000000, backupCount=10),
     ],
 )

@@ -38,8 +38,9 @@ Before you get started, you need [Python](https://python.org) 3.7 or later to ru
 3. Turn the application into a bot and copy its token. **NEVER SHARE THIS WITH ANYBODY, IT IS THE WAY THE PYTHON SCRIPT GAINS ACCESS TO THE BOT!!!**
 <!-- Pretty sure that you setup the config either in environment variables or in the .env file but whatever -->
 4. Append the bot token to `TOKEN` value in the configuration file `(.env)`. After that, setup the bot prefix (e.g ?, !, etc.). 
-5. Open up a Terminal (on Windows namely Command Prompt or Windows PowerShell) and then `cd` (enter) into the directory of the extracted folder from before.
-6. Run `python3 CloneCord.py`. The output of the Terminal or Command Line should have no errors and show that everything is all ready!
+<!-- 5. Adding bot to server: https://codesphere.ghost.io/create-a-discord-bot-in-minutes-with-python/  -->
+6. Open up a Terminal (on Windows namely Command Prompt or Windows PowerShell) and then `cd` (enter) into the directory of the extracted folder from before.
+7. Run `python3 CloneCord.py`. The output of the Terminal or Command Line should have no errors and show that everything is all ready!
 
 **Enjoy using CloneCord!**
 
