@@ -34,13 +34,12 @@ Before you get started, you need [Python](https://python.org) 3.7 or later to ru
 ## How to run the bot
 
 1. Download the repository as a zip file and extract it (Click on the green `Code` button on the front page of this GitHub repo and then click `Download Zip`). Make sure to keep the xtracted folder in a directory which can be easily accessed. An alternative way is to use Git to `git clone https://github.com/rekulous/clonecord-bot` and get the repo.
-2. Go to the [Discord App Dev Portal](https://discord.com/developers/applications) and then create a new application.
+2. Go to the [Discord Application Developer Portal](https://discord.com/developers/applications) and then create a new application.
 3. Turn the application into a bot and copy its token. **NEVER SHARE THIS WITH ANYBODY, IT IS THE WAY THE PYTHON SCRIPT GAINS ACCESS TO THE BOT!!!**
 <!-- Pretty sure that you setup the config either in environment variables or in the .env file but whatever -->
-<!-- 4. In the `config.json` file, you are going to want to put the token in where the `token` line is. After that, set the bot prefix you want and then save the file. -->
 4. Append the bot token to `TOKEN` value in the configuration file `(.env)`. After that, setup the bot prefix (e.g ?, !, etc.). 
 5. Open up a Terminal (on Windows namely Command Prompt or Windows PowerShell) and then `cd` (enter) into the directory of the extracted folder from before.
-6. Run `python CloneCord.py` or `python3 CloneCord.py`. The output of the Terminal or Command Line should have no errors and show that everything is all ready!
+6. Run `python3 CloneCord.py`. The output of the Terminal or Command Line should have no errors and show that everything is all ready!
 
 **Enjoy using CloneCord!**
 
@@ -57,4 +56,4 @@ Before you get started, you need [Python](https://python.org) 3.7 or later to ru
 
 **Deploy to Heroku:**
 
- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Rekulous/CloneCord-Bot/blob/main)
+ [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/reaitten/CloneCord-Bot/blob/main)
