@@ -1,8 +1,8 @@
 {
 	"name": "CloneCord-Bot",
 	"description": "A Discord.py Google Drive Utilities bot based on GClone, an RClone mod that allows multiple Google Service Account configuration.",
-	"repository": "https://github.com/Rekulous/CloneCord-Bot",
-	"website": "https://github.com/Rekulous/CloneCord-Bot",
+	"repository": "https://github.com/reaitten/CloneCord-Bot",
+	"website": "https://github.com/reaitten/CloneCord-Bot",
 	"stack": "container",
 	"env": {
 		"TOKEN": {

@@ -4,4 +4,4 @@ build:
 release:
   image: worker
   command:
-    - python3 ./CloneCord-Mac-Linux.py
+    - python3 ./UnixCloneCord.py

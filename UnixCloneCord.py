@@ -22,28 +22,16 @@
 # If you want to help with the development of this bot, you can fork it on GitHub, edit the code you think needs work / add a feature, and create a pull request! Doing this helps me a lot!
 
 # Python module imports. DO NOT TOUCH UNLESS YOU ARE ADDING A NEW FEATURE! These imports make the bot work and function properly!
-import json
-import logging
-import subprocess
-import sys
-import platform
-import os
-import random
-import struct
-import time
+import logging, subprocess, sys, platform, os, asyncio, time, discord
+
+# unused imports
+import json, random, struct
+
 from dotenv import load_dotenv
 from time import sleep
 from typing import Optional
-import asyncio
-import discord
 from discord.ext import commands
 from discord.utils import get
-
-# Change CMD Text Color to Cyan, and Change CMD / Python Window Title Name
-os.system(
-    "title CloneCord Discord Bot V6 BETA by REKULOUS. Original code by KushTheApplusser"
-)
-os.system("color 0B")
 
 # Fetch .env configuration. DO NOT TOUCH
 if not os.path.isfile(".env"):
@@ -55,7 +43,7 @@ else:
 
     TOKEN = os.getenv("TOKEN")
     PREFIX = os.getenv("PREFIX")
-LOGGER
+
 # Some sweet bot logging. I don't think it logs GClone commands and stuff like that
 LOGGER = logging.getLogger("discord")
 LOGGER.setLevel(logging.DEBUG)
@@ -71,45 +59,28 @@ bot = commands.Bot(command_prefix=PREFIX)
 # Print this if the bot is ready and start bot status + give GClone details.
 @bot.event
 async def on_ready():
-    print(
-        "<===============================|| Running CloneCord Version 5 BETA! ||===============================>"
-    )
-    print("Connected to bot: {}".format(bot.user.name))
-    print("Bot ID: {}".format(bot.user.id))
-    print("CloneCord is Ready!")
+    LOGGER.info("CloneCord Version 5 Beta")
+    LOGGER.info("Connected to bot: {}".format(bot.user.name))
+    LOGGER.info("Bot ID: {}".format(bot.user.id))
+    # LOGGER.info("CloneCord is Ready!")
     await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.watching,
+            # name=PREFIX + "help to get help! CloneCord V6 BETA",
             name=PREFIX + "help to get help! CloneCord V6 BETA",
         )
     )
-    print("CloneCord Status Ready!")
-    print("Python Version: {}".format(platform.python_version()))
-    print("Discord.py API version: {}".format(discord.__version__))
-    print(
-        "=================================================================================================================================================="
-    )
-    print(
-        "----------------------------------------------------------------------------------------------------------------------"
-    )
-    print("GClone Version:")
-    print()
-    subprocess.run(["gclone", "version"])
-    print("____________________")
-    print("GClone Remotes:")
-    print()
-    subprocess.run(["gclone", "listremotes"])
-    print(
-        "----------------------------------------------------------------------------------------------------------------------"
-    )
-    print(
-        "==================================================================[ALL READY!!!]=================================================================="
-    )
+    # LOGGER.info("CloneCord Status Ready!")
+    LOGGER.info("Python Version: {}".format(platform.python_version()))
+    LOGGER.info("Discord.py API version: {}".format(discord.__version__))
+    LOGGER.info("GClone Version: %s", subprocess.run(["gclone", "version"]))
+    LOGGER.info("GClone Remotes: %s", subprocess.run(["gclone", "listremotes"]))
+    LOGGER.info("Setup complete!")
 
 
 # Block commands in bot DMs for security. If you are using the bot for your own private use and its not in a server, you can remove the bot check.
 @bot.check
-async def globally_block_dms(ctx):
+async def globally_block_dms(ctx: commands.Context):
     return ctx.guild is not None
 
 
@@ -119,7 +90,7 @@ bot.remove_command("help")
 
 
 @bot.command()
-async def help(ctx, command: Optional[str]):
+async def help(ctx: commands.Context, command: Optional[str]):
     list_of_commands = [
         {"command": "clone", "value": "`<source id> <destination id>`"},
         {"command": "move", "value": "`<source id> <destination id>`"},
@@ -197,28 +168,30 @@ async def help(ctx, command: Optional[str]):
 # GClone Folder / File Clone Command
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def clone(ctx, source, destination):
+async def clone(ctx: commands.Context, source, destination):
     s1 = "{" + source + "}"
     d1 = "{" + destination + "}"
     await ctx.send(
         "***Check the destination folder in 5 minutes if your clone is couple terabytes. If your clone is less than a terabyte, the clone will be complete within a couple of seconds!***"
     )
     proc = await asyncio.create_subprocess_exec(
-        "gclone",
-        "copy",
-        f"GC:{s1}",
-        f"GC:{d1}",
-        "--transfers",
-        "50",
-        "-vP",
-        "--stats-one-line",
-        "--stats=15s",
-        "--ignore-existing",
-        "--drive-server-side-across-configs",
-        "--drive-chunk-size",
-        "128M",
-        "--drive-acknowledge-abuse",
-        "--drive-keep-revision-forever",
+        [
+            "gclone",
+            "copy",
+            f"GC:{s1}",
+            f"GC:{d1}",
+            "--transfers",
+            "50",
+            "-vP",
+            "--stats-one-line",
+            "--stats=15s",
+            "--ignore-existing",
+            "--drive-server-side-across-configs",
+            "--drive-chunk-size",
+            "128M",
+            "--drive-acknowledge-abuse",
+            "--drive-keep-revision-forever",
+        ]
     )
     await proc.wait()
     await ctx.send(
@@ -226,81 +199,81 @@ async def clone(ctx, source, destination):
             destination
         )
     )
-    print(
-        "===========================================================================[CLONING COMPLETE]==========================================================================="
-    )
+    LOGGER.info("Cloning Complete)!")
 
 
 # GClone Folder / File Move Command
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def move(ctx, source, destination):
+async def move(ctx: commands.Context, source, destination):
     s1 = "{" + source + "}"
     d1 = "{" + destination + "}"
     await ctx.send(
         "***Check the destination folder in 5 minutes if your transfer is couple terabytes. If your transfer is less than a terabyte, the clone will be complete within a couple of seconds!***"
     )
     proc = await asyncio.create_subprocess_exec(
-        "gclone",
-        "move",
-        f"GC:{s1}",
-        f"GC:{d1}",
-        "--transfers",
-        "50",
-        "--tpslimit-burst",
-        "50" "--checkers",
-        "10",
-        "-vP",
-        "--stats-one-line",
-        "--stats=15s",
-        "--ignore-existing",
-        "--drive-server-side-across-configs",
-        "--drive-chunk-size",
-        "128M",
-        "--drive-acknowledge-abuse",
-        "--drive-keep-revision-forever",
-        "--fast-list",
+        [
+            "gclone",
+            "move",
+            f"GC:{s1}",
+            f"GC:{d1}",
+            "--transfers",
+            "50",
+            "--tpslimit-burst",
+            "50" "--checkers",
+            "10",
+            "-vP",
+            "--stats-one-line",
+            "--stats=15s",
+            "--ignore-existing",
+            "--drive-server-side-across-configs",
+            "--drive-chunk-size",
+            "128M",
+            "--drive-acknowledge-abuse",
+            "--drive-keep-revision-forever",
+            "--fast-list",
+        ]
     )
     await proc.wait()
     await ctx.send(
-        "**File Transfers Completed** --- https://drive.google.com/drive/folders/{}".format(
+        "**Moved files to destination sucessfully.** --- https://drive.google.com/drive/folders/{}".format(
             destination
         )
     )
-    print(
-        "===========================================================================[FILE TRANSFERS COMPLETED]==========================================================================="
-    )
+    LOGGER.info("Moved files to destination sucessfully.")
 
 
 # GClone Sync Command
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def sync(ctx, source, destination):
+async def sync(ctx: commands.Context, source, destination):
     s1 = "{" + source + "}"
     d1 = "{" + destination + "}"
     await ctx.send(
         "***CloneCord is syncing... it should be done syncing in a couple of minutes!***"
     )
     proc = await asyncio.create_subprocess_exec(
-        "gclone",
-        "sync",
-        f"GC:{s1}",
-        f"GC:{d1}",
-        "--transfers",
-        "50",
-        "--tpslimit-burst",
-        "50",
-        "--checkers",
-        "10",
-        "-vP",
-        "--stats-one-line",
-        "--stats=15s",
-        "--drive-server-side-across-configs",
-        "--drive-chunk-size",
-        "128M",
-        "--drive-acknowledge-abuse",
-        "--drive-keep-revision-forever",
-        "--fast-list",
+        [
+            "gclone",
+            "sync",
+            f"GC:{s1}",
+            f"GC:{d1}",
+            "--transfers",
+            "50",
+            "--tpslimit-burst",
+            "50",
+            "--checkers",
+            "10",
+            "-vP",
+            "--stats-one-line",
+            "--stats=15s",
+            "--drive-server-side-across-configs",
+            "--drive-chunk-size",
+            "128M",
+            "--drive-acknowledge-abuse",
+            "--drive-keep-revision-forever",
+            "--fast-list",
+        ]
     )
     await proc.wait()
     await ctx.send(
@@ -308,41 +281,37 @@ async def sync(ctx, source, destination):
             destination
         )
     )
-    print(
-        "===========================================================================[SYNC COMPLETED]==========================================================================="
-    )
+    LOGGER.info("Syncronized Sucessfully.")
 
 
 # GClone Empty / Clear Directory Command
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def emptdir(ctx, source):
+async def emptdir(ctx: commands.Context, source):
     s1 = "{" + source + "}"
     await ctx.send(
         "*CloneCord is emptying the directory... it should be done in around 5 minutes if your directory is big!* **If you are worried about losing your deleted files forever, don't worry! You can recover stuff from your trash can!**"
     )
     proc = await asyncio.create_subprocess_exec(
-        "gclone", "delete", f"GC:{s1}", "-vP", "--drive-trashed-only", "--fast-list"
+        ["gclone", "delete", f"GC:{s1}", "-vP", "--drive-trashed-only", "--fast-list"]
     )
     await proc.wait()
     await ctx.send(
-        "**Emptying Directory Completed** --- https://drive.google.com/drive/folders/{}".format(
+        "**Deleted Sucessfully!** --- https://drive.google.com/drive/folders/{}".format(
             source
         )
     )
-    print(
-        "===========================================================================[FINISHED EMPTYING DIRECTORY]==========================================================================="
-    )
+    LOGGER.info("Deleted Sucessfully!")
 
 
 # GClone md5sum file creation for all the objects in a directory
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def md5(ctx, source):
+async def md5(ctx: commands.Context, source):
     s1 = "{" + source + "}"
     await ctx.send("***Producing MD5 Hash, please wait...***")
     proc = await asyncio.create_subprocess_exec(
-        "gclone", "md5sum", f"GC:{s1}", "--fast-list"
+        ["gclone", "md5sum", f"GC:{s1}", "--fast-list"]
     )
     await proc.wait()
     await ctx.send(
@@ -350,48 +319,46 @@ async def md5(ctx, source):
             source
         )
     )
-    print(
-        "===========================================================================[FINISHED PRODUCING MD5]==========================================================================="
-    )
+    LOGGER.info("Sucessfully created MD5 Hash!")
 
 
 # GClone Remove Empty Directories
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def rmdi(ctx, source):
+async def rmdi(ctx: commands.Context, source):
     s1 = "{" + source + "}"
     await ctx.send(
         "*Removing empty directories... this should take a few seconds or more.* **If you want to recover your empty folders, don't worry, they will be in your trash can!**"
     )
     proc = await asyncio.create_subprocess_exec(
-        "gclone",
-        "rmdirs" f"GC:{s1}",
-        "-v",
-        "--stats-one-line",
-        "--stats=15s",
-        "--fast-list",
+        [
+            "gclone",
+            "rmdirs" f"GC:{s1}",
+            "-v",
+            "--stats-one-line",
+            "--stats=15s",
+            "--fast-list",
+        ]
     )
     await proc.wait()
     await ctx.send(
-        "**Finished removing empty dirs** --- https://drive.google.com/drive/folders/{}".format(
+        "**Deleted all empty directories!** --- https://drive.google.com/drive/folders/{}".format(
             source
         )
     )
-    print(
-        "===========================================================================[FINISHED REMOVING EMPTY DIRECTORIES]==========================================================================="
-    )
+    LOGGER.info("Deleted all empty directories!")
 
 
 # GClone Dedupe Files / Folders
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def dedupe(ctx, source):
+async def dedupe(ctx: commands.Context, source):
     s1 = "{" + source + "}"
     await ctx.send(
         "*Deduplicating files... this should take a few seconds or more.* **If you want to recover your files / folders, don't worry, they will be in your trash can!**"
     )
     proc = await asyncio.create_subprocess_exec(
-        "gclone", "dedupe", "--dedupe-mode", "newest", f"GC:{s1}", "-v", "--fast-list"
+        ["gclone", "dedupe", "--dedupe-mode", "newest", f"GC:{s1}", "-v", "--fast-list"]
     )
     await proc.wait()
     await ctx.send(
@@ -399,53 +366,49 @@ async def dedupe(ctx, source):
             source
         )
     )
-    print(
-        "===========================================================================[FINISHED DEDUPING FILES]==========================================================================="
-    )
+    LOGGER.info("Sucess on deduplicating!")
 
 
 # GClone Create Directory
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def mkdir(ctx, source):
+async def mkdir(ctx: commands.Context, source):
     s1 = "{" + source + "}"
     await ctx.send("***Creating directory...***")
-    proc = await asyncio.create_subprocess_exec("gclone", "mkdir", f"GC:{s1}")
+    proc = await asyncio.create_subprocess_exec(["gclone", "mkdir", f"GC:{s1}"])
     await proc.wait()
     await ctx.send(
         "**Created directory** --- https://drive.google.com/drive/folders/{}".format(
             source
         )
     )
-    print(
-        "===========================================================================[CREATED DIRECTORY]==========================================================================="
-    )
+    LOGGER.info("Created Directory!")
 
 
 # GClone Purge Folders
 @bot.command()
 @commands.cooldown(1, 140, commands.BucketType.user)
-async def purge(ctx, source):
+async def purge(ctx: commands.Context, source):
     s1 = "{" + source + "}"
     await ctx.send("***Purging directory...***")
     proc = await asyncio.create_subprocess_exec(
-        "gclone",
-        "purge",
-        f"GC:{s1}",
-        "-vP",
-        "--stats-one-line",
-        "--stats=15s",
-        "--fast-list",
+        [
+            "gclone",
+            "purge",
+            f"GC:{s1}",
+            "-vP",
+            "--stats-one-line",
+            "--stats=15s",
+            "--fast-list",
+        ]
     )
     await proc.wait()
     await ctx.send(
-        "**Purged Directory** --- https://drive.google.com/drive/folders/{}".format(
+        "**Deleted folder & its contents sucessfully!** --- https://drive.google.com/drive/folders/{}".format(
             source
         )
     )
-    print(
-        "===========================================================================[PURGED DIRECTORY]==========================================================================="
-    )
+    LOGGER.info("Deleted folder & its contents sucessfully!")
 
 
 # CloneCord Error Messages to make the bot have a command cooldown and send error messages about invalid commands / arguments
@@ -461,7 +424,7 @@ async def purge(ctx, source):
 # All commands by default have a 140 Second Cooldown. If you want, you can remove the code before "else:" to remove cooldowns. Don't remove @<command>.error stuff!
 # Not recommended to remove this if you are using this bot in a server with other people than you though.
 # Be sure to remove the @commands.cooldown(1, 140, commands.BucketType.user) stuff too in the code for commands if you want to remove cooldowns.
-async def error(ctx, error):
+async def error(ctx: commands.Context, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
         return
@@ -484,7 +447,7 @@ async def ping(ctx: commands.Context):
     await message.edit(
         content=f":ping_pong:    *Pong!*    **`{round(bot.latency * 1000)}ms`**    :ping_pong:\n:ping_pong:    **API Ping:** **`{round((end_time - start_time) * 1000)}ms`**  :ping_pong:"
     )
-    print("||=- - - - - - - - > Pinged! < - - - - - - - -=||")
+    LOGGER.debug("Recieved ping!")
 
 
 # Start the bot, DO NOT TOUCH!
