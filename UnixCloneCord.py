@@ -59,7 +59,7 @@ bot = commands.Bot(command_prefix=PREFIX)
 # Print this if the bot is ready and start bot status + give GClone details.
 @bot.event
 async def on_ready():
-    LOGGER.info("CloneCord Version 5 Beta")
+    LOGGER.info("CloneCord Version 6 Beta")
     LOGGER.info("Connected to bot: {}".format(bot.user.name))
     LOGGER.info("Bot ID: {}".format(bot.user.id))
     # LOGGER.info("CloneCord is Ready!")
